@@ -49,3 +49,74 @@
     background-color: #f9f9f9;
   }
   
+
+  .student-details-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column; /* Stack semesters vertically */
+    align-items: center; /* Center-align the semester details */
+  }
+  
+  .semester-details {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 20px; /* Space between semesters */
+    width: 100%; /* Full width for smaller screens or a max-width for larger screens */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .semester-heading {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    margin: -15px -15px 10px -15px; /* Align with the card edges */
+  }
+  
+  .semester-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px; /* Space before the CGPA */
+  }
+  
+  .semester-table th,
+  .semester-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .semester-table th {
+    background-color: #4caf50;
+    color: #fff;
+  }
+  
+  .semester-cgpa {
+    text-align: right;
+    font-weight: bold;
+    color: hsl(120, 81%, 4%);
+  }
+  
+  /* Additional styles */
+  /* Zebra striping for rows */
+  .semester-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Hover effect for rows */
+  .semester-table tbody tr:hover {
+    background-color: #f1f8e9;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .student-details-container {
+      width: 100%;
+    }
+  
+    .semester-details {
+      width: 100%; /* Full width on smaller screens */
+    }
+  }
+  
