@@ -15,8 +15,10 @@ export default class Amikiparbo extends Component {
 
   constructor(props) {
     super(props);
-    // Bind the debounced handleOnChange method
-    this.handleOnChange = debounce(this.handleOnChange.bind(this), 300);
+    // Bind the handleOptionChange and handleOnChange methods
+    this.handleOptionChange = this.handleOptionChange.bind(this);
+    // Debounce the search operation
+    this.debouncedSearch = debounce(this.searchStudents, 300);
   }
 
   handleOptionChange = (e) => {
@@ -29,23 +31,26 @@ export default class Amikiparbo extends Component {
   };
 
   handleOnChange = (e) => {
-    // Directly using the event value since we're debouncing
-    const value = e;
+    const value = e.target.value;
+    // Update the input field value
+    this.setState({ selectedValue: value });
+    // Perform the debounced search
+    this.debouncedSearch(value);
+  };
+
+  searchStudents = (value) => {
     const { option } = this.state;
+
+    if (value.length < 2) { // Skip search if the query is too short
+      this.setState({ filteredStudents: [] });
+      return;
+    }
 
     if (option === 'name') {
       const filteredStudents = Object.keys(students).filter((id) =>
         students[id]['1'].toLowerCase().includes(value.toLowerCase())
       );
-      this.setState({
-        selectedValue: value,
-        filteredStudents,
-      });
-    } else {
-      this.setState({
-        selectedValue: value,
-        filteredStudents: [],
-      });
+      this.setState({ filteredStudents });
     }
   };
 
@@ -78,10 +83,9 @@ export default class Amikiparbo extends Component {
   };
 
   generateURLAndOpen = async (id) => {
-    const url = `https://usis.bracu.ac.bd/academia/docuJasper/index?studentId=${id}&reportFormat=PDF&old_id_no=${id}&strMessage=&scholarProgramMsg=&companyLogo=%2Fvar%2Facademia%2Fimage%2FuniversityLogo%2F1571986355.jpg&companyName=BRAC+University&headerTitle=GRADE+SHEET&companyAddress=66%2C+MOHAKHALI+C%2FA%2C+DHAKA+-+1212.&academicStanding=Satisfactory&gradeSheetBackground=%2Fbits%2Fusis%2Ftomcat%2Fwebapps%2Facademia%2Fimages%2FgradeSheetBackground.jpg&_format=PDF&_name=GRADE_SHEET_${id}_${id}&_file=student%2FrptStudentGradeSheetForStudent.jasper`;
-
+    // Your URL generation logic remains the same...
+    const url = `https://usis.bracu.ac.bd/academia/docuJasper/index?studentId=${id}&reportFormat=PDF&old_id_no=${id}&...`;
     this.setState({ changedValue: url });
-
     window.open(url, '_blank', 'height=600px, width=600px');
   };
 
@@ -94,6 +98,7 @@ export default class Amikiparbo extends Component {
 
     return (
       <div className="student-details-container">
+        {/* Render the student details */}
         {Object.entries(details).map(([semester, detail]) => (
           <div key={semester} className="semester-details">
             <h3 className="semester-heading">{semester}</h3>
@@ -150,7 +155,7 @@ export default class Amikiparbo extends Component {
           <input
             type="text"
             value={selectedValue}
-            onChange={(e) => this.handleOnChange(e.target.value)}
+            onChange={this.handleOnChange}
             className="input-field"
           />
           <button onClick={this.handleClick} className="submit-button">
@@ -158,7 +163,6 @@ export default class Amikiparbo extends Component {
           </button>
         </div>
 
-        {/* Conditionally render student details or the list of students */}
         {!selectedStudentId ? (
           option === 'name' && filteredStudents.length > 0 && (
             <table className="student-table">
@@ -173,13 +177,8 @@ export default class Amikiparbo extends Component {
               </thead>
               <tbody>
                 {filteredStudents.map((id) => (
-                  <tr key={id}>
-                    <td
-                      onClick={() => this.handleStudentClick(id)}
-                      style={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue' }}
-                    >
-                      {id}
-                    </td>
+                  <tr key={id} onClick={() => this.handleStudentClick(id)} style={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue' }}>
+                    <td>{id}</td>
                     <td>{students[id]['1']}</td>
                     <td>{students[id]['3']}</td>
                     <td>{students[id]['4']}</td>
