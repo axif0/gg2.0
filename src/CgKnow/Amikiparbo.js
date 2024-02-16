@@ -125,58 +125,74 @@ export default class Amikiparbo extends Component {
   render() {
     const { option, selectedValue, filteredStudents, selectedStudentId, loading } = this.state;
 
-    return (
-      <div className="amikiparbo-container">
-        <h1>Enter your {option === 'name' ? 'name' : option === 'multipleIds' ? 'IDs' : 'ID'}:</h1>
-        <div className="radio-group">
-          <label>
-            <input type="radio" value="id" checked={option === 'id'} onChange={this.handleOptionChange} />
-            Student ID
-          </label>
-          <label>
-            <input type="radio" value="name" checked={option === 'name'} onChange={this.handleOptionChange} />
-            Student Name
-          </label>
-          <label>
-            <input type="radio" value="multipleIds" checked={option === 'multipleIds'} onChange={this.handleOptionChange} />
-            Multiple IDs
-          </label>
-        </div>
-        <div className="input-group">
-          <input type="text" value={selectedValue} onChange={this.handleOnChange} className="input-field" />
-          <button onClick={this.handleClick} className="submit-button">
-            {loading ? 'Loading...' : 'Submit'}
-          </button>
-        </div>
-        {!selectedStudentId ? (
-          (option === 'name' || option === 'multipleIds') && filteredStudents.length > 0 ? (
+    // Function to render filtered student search results
+    const renderFilteredStudents = () => {
+        if (filteredStudents.length === 0 || selectedStudentId) return null; // Don't display if no students or a student is selected
+
+        return (
             <table className="student-table">
-              <thead>
-                <tr>
-                  <th>Student ID</th>
-                  <th>Student Name</th>
-                  <th>Total CGPA</th>
-                  <th>Total Attempt</th>
-                  <th>Earned</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredStudents.map((id) => (
-                  <tr key={id} onClick={() => this.handleStudentClick(id)} style={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue' }}>
-                    <td>{id}</td>
-                    <td>{students[id] ? students[id]['1'] : 'Not Found'}</td>
-                    <td>{students[id] ? students[id]['3'] : 'N/A'}</td>
-                    <td>{students[id] ? students[id]['4'] : 'N/A'}</td>
-                    <td>{students[id] ? students[id]['5'] : 'N/A'}</td>
-                  </tr>
-                ))}
-              </tbody>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Total CGPA</th>
+                        <th>Total Attempt</th>
+                        <th>Earned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {filteredStudents.map((id) => {
+                        const studentInfo = students[id] || {};
+                        return (
+                            <tr key={id} onClick={() => this.handleStudentClick(id)} style={{ cursor: 'pointer' }}>
+                                <td>
+                    <button 
+                        style={{ background: 'none', border: 'none', padding: 0, color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
+                        onClick={(e) => {
+                            e.stopPropagation(); // Prevent the row click event if any
+                            this.handleStudentClick(id);
+                        }}
+                    >
+                        {id}
+                    </button>
+                </td>
+                                <td>{studentInfo['1'] || 'Not Found'}</td>
+                                <td>{studentInfo['3'] || 'N/A'}</td>
+                                <td>{studentInfo['4'] || 'N/A'}</td>
+                                <td>{studentInfo['5'] || 'N/A'}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
             </table>
-          ) : null
-        ) : (
-          this.renderStudentDetails()
-        )}
-      </div>
+        );
+    };
+
+    return (
+        <div className="amikiparbo-container">
+            <h1>Enter your {option === 'name' ? 'name' : option === 'multipleIds' ? 'IDs' : 'ID'}:</h1>
+            <div className="radio-group">
+                {['id', 'name', 'multipleIds'].map(opt => (
+                    <label key={opt}>
+                        <input
+                            type="radio"
+                            value={opt}
+                            checked={option === opt}
+                            onChange={this.handleOptionChange}
+                        />
+                        {opt === 'multipleIds' ? 'Multiple IDs' : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </label>
+                ))}
+            </div>
+            <div className="input-group">
+                <input type="text" value={selectedValue} onChange={(e) => this.handleOnChange(e)} className="input-field" />
+                <button onClick={this.handleClick} disabled={loading} className="submit-button">
+                    {loading ? 'Loading...' : 'Submit'}
+                </button>
+            </div>
+            {renderFilteredStudents()}
+            {selectedStudentId ? this.renderStudentDetails() : null}
+        </div>
     );
-  }
+}
 }
