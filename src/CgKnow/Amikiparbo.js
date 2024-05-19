@@ -81,7 +81,7 @@ export default class Amikiparbo extends Component {
   };
 
   generateURLAndOpen = async (id) => {
-    const url = `https://usis.bracu.ac.bd/academia/docuJasper/index?studentId=${id}&reportFormat=PDF&old_id_no=${id}&...`;
+    const url = `https://usis.bracu.ac.bd/academia/docuJasper/index?studentId=${id}&reportFormat=PDF&old_id_no=${id}&strMessage=&scholarProgramMsg=&companyLogo=%2Fvar%2Facademia%2Fimage%2FuniversityLogo%2F1571986355.jpg&companyName=BRAC+University&headerTitle=GRADE+SHEET&companyAddress=66%2C+MOHAKHALI+C%2FA%2C+DHAKA+-+1212.&academicStanding=Satisfactory&gradeSheetBackground=%2Fbits%2Fusis%2Ftomcat%2Fwebapps%2Facademia%2Fimages%2FgradeSheetBackground.jpg&_format=PDF&_name=GRADE_SHEET_20301268_mamamia&_file=student%2FrptStudentGradeSheetForStudent.jasper`;
     // Assuming this.setState({ changedValue: url }); is for debug or log, updated to console.log for clarity
     console.log(url); // Log the URL for reference
     window.open(url, '_blank', 'height=600px,width=600px');
